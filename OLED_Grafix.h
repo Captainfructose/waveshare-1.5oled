@@ -4,6 +4,8 @@
 
 #include "OLED_Driver.h"
 
+#define PI 3.14159
+
 
 class OLED_Grafix : public virtual OLED_Driver{
     
@@ -26,16 +28,21 @@ class OLED_Grafix : public virtual OLED_Driver{
         void drawFCircle(int16_t x0, int16_t y0, int16_t r);
         void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
         void drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r);
-        void drawGauge(int x, int y, int value, int max, int radius);
+        void drawGauge(uint16_t x, uint16_t y, uint16_t value, uint16_t max, uint16_t radius);
         void setColor(const uint8_t *text);
         void setFillColor(const uint8_t *text);
         void printNum(uint8_t x, uint8_t y, uint8_t num);
         void writeText(uint8_t x, uint8_t y, const uint8_t *text);
+        void drawFrame(uint8_t x, uint8_t y);
 
-    private:
+        private : 
         void writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
         void circleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corner);
         void FCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corner, int16_t delta);
+        float sin(int deg);
+        float cos(int deg);
+        float power(float base, int exp);
+        int fact(int n);
 };
 
 #endif

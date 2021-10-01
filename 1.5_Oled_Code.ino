@@ -1,5 +1,4 @@
 #include "OLED_Driver.h"
-#include "OLED_GFX.h"
 #include "ASCII_Font.h"
 #include "OLED_Grafix.h"
 
@@ -47,23 +46,31 @@ void setup()  {
 }
 
 int count;
-
+boolean switcher = false;
 void loop() {
   grafix.setBarColor(GREEN);
   grafix.setGraphColor(WHITE);
   grafix.setTextColor(BLUE);
   grafix.HBarGraph(50, 19, 60, 10, count, 60);
   grafix.VBarGraph(2, 60, 10, 60, count, 60);
-  grafix.drawGauge(40,50,10,10,10);
-  
-  if (count >= 60) {
-    count = 0;
+  grafix.drawGauge(60,70,count,60,30);
+  // grafix.drawGauge(60, 120, count, 60, 20);
+  grafix.drawFrame(60, 75);
 
+  if (count == 60) {
+    switcher = true;
+  }
+  if (count == 0) {
+    switcher = false;
+  }
+  if (switcher == true) {
+    count--;
+  }
+  if (switcher == false) {
+    count++;
   }
 
   grafix.printNum(30, 20, count);
   
-
-  count++;
-  delay(100);
+  delay(50);
 }
