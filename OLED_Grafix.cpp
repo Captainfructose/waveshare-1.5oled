@@ -2,7 +2,9 @@
 #include "ASCII_Font.h"
 #include "OLED_Grafix.h"
 
+#include <math.h>
 #include "stdlib.h"
+
 using namespace std;
 
 OLED_Driver oled_d = OLED_Driver();
@@ -26,43 +28,45 @@ void OLED_Grafix::initScreen(void)
     Device_Init();
 }
 
-void OLED_Grafix::HBarGraph(int x, int y, int w, int h, int value, int maxi) 
+void OLED_Grafix::HBarGraph(int x, int y, float w, int h, float value, float maxi) 
 {
-    if(value > maxi)
+    int pos = round((w / maxi) * value);
+    oled_d.Set_Color(graph_color);
+    drawRect(x, y, w, h);
+    if (pos > w)
     {
         return;
     }
-    oled_d.Set_Color(graph_color);
-    drawRect(x, y, w, h);
-    if (value < maxi-3)
+    if (pos < w - 2)
     {
         oled_d.Set_FillColor(bar_color);
-        drawFRect(x + 1, y + 1, (w / maxi) * value + 1, h - 2);
+        drawFRect(x + 1, y + 1, pos + 1, h - 2);
         oled_d.Set_FillColor(BLACK);
-        drawFRect(x + (w / maxi) * value + 2, y + 1, w - (w / maxi) * value - 3, h - 2);
+        drawFRect(x + pos + 2, y + 1, w - pos - 3, h - 2);
     }
-    if (value == maxi)
+    if (pos >= w - 2)
     {
         oled_d.Set_FillColor(bar_color);
         drawFRect(x + 2, y + 1, w - 3, h - 2);
     }
 }
 
-void OLED_Grafix::VBarGraph(int x, int y, int w, int h, int value, int maxi) {
-    if (value > maxi)
+void OLED_Grafix::VBarGraph(int x, int y, int w, float h, float value, float maxi) {
+    int pos = round((h / maxi) * value);
+    if (pos > h)
     {
         return;
     }
     oled_d.Set_Color(graph_color);
     drawRect(x, y, w, h);
-    if (value < maxi-3)
+    if (pos < h - 2)
     {
         oled_d.Set_FillColor(bar_color);
-        drawFRect(x + 1, (y + h) - (h / maxi) * value - 1, w - 2, (h / maxi) * value);
+        drawFRect(x + 1, (y + h) - pos - 1, w - 2, pos);
         oled_d.Set_FillColor(BLACK);
-        drawFRect(x + 1, y + 1, w - 2,h - (h / maxi) * value - 3);
+        drawFRect(x + 1, y + 1, w - 2,h - pos - 3);
     }
-    if(value == maxi)
+    if(pos >= h - 2)
     {
         oled_d.Set_FillColor(bar_color);
         drawFRect(x + 1, y + 1, w - 2, h - 2);
@@ -197,25 +201,21 @@ void OLED_Grafix::drawGauge(uint16_t x0, uint16_t y0, uint16_t value, uint16_t m
     int16_t ddF_y = -2 * r;
     int16_t x = 0;
     int16_t y = r;
-    float angle = value*(180/maxi);
-    float angleb = (value-2)*(180/maxi);
 
     setColor(graph_color);
     Draw_Pixel(x0, y0 - r);
     Draw_Pixel(x0 + r, y0);
     Draw_Pixel(x0 - r, y0);
-    drawLine(x0 + r, y0, x0 - r, y0);
-    if(value < maxi) 
-    {
+    Draw_FastHLine(x0-r,y0,r+r);
+    
+    if(value <= maxi && value >= 0) 
+    { 
         setColor(bar_color);
-        drawLine(x0, y0, x0 - (r - 1) * cos(angle), y0 - (r - 1) * sin(angle));
+        drawLine(x0, y0, x0 - (r - 1) * cos(value * (PI / maxi)), y0 - (r - 1) * sin(value * (PI / maxi)));
         setColor(BLACK);
-        drawLine(x0-2 - 2 * cos(angle), y0 - 2 * sin(angle), x0-2 - r * cos(angle), y0 - r * sin(angle));
-        drawLine(x0-4 - 2 * cos(angle), y0 - 2 * sin(angle), x0-4 - r * cos(angle), y0 - r * sin(angle));
-        // drawLine(x0 - 2 * cos(angleb - 4), y0 - 2 * sin(angleb - 4), x0 - r * cos(angleb - 4), y0 - r * sin(angleb - 4));
+        drawLine(x0, y0, x0 - (r - 1) * cos((value - 2) * (PI / maxi)), y0 - (r - 1) * sin((value - 2) * (PI / maxi)));
 
-        drawLine(x0 + 2 - 2 * cos(angle), y0 - 2 * sin(angle), x0 + 2 - r * cos(angle), y0 - r * sin(angle));
-        drawLine(x0 + 4 - 2 * cos(angle), y0 - 2 * sin(angle), x0 + 4 - r * cos(angle), y0 - r * sin(angle));
+        drawLine(x0, y0, x0 - (r - 1) * cos((value + 2) * (PI / maxi)), y0 - (r - 1) * sin((value + 2) * (PI / maxi)));
         setColor(graph_color);
     }
 
@@ -270,21 +270,6 @@ void OLED_Grafix::printNum(uint8_t x, uint8_t y, uint8_t num)
         writeText(x, y, nums[num / 100 % 10]);
         writeText(x + 6, y, nums[num / 10 % 10]);
         writeText(x + 12, y, nums[num % 10]);
-    }
-}
-
-void OLED_Grafix::drawFrame(uint8_t x, uint8_t y)
-{   int i = 0;
-    while (i <= 8)
-    {   
-        for (int k = 0; k <= 64; k++)
-        {
-            Set_Address(x + k, y);
-            if(Frame1[k][i] > 0x00) {
-                Draw_Pixel(x+i,y+k);
-            }
-        }
-        i++;
     }
 }
 
@@ -437,50 +422,3 @@ void OLED_Grafix::FCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corne
     }
 }
 
-float OLED_Grafix::sin(int deg)
-{
-    deg %= 360;
-    float rad = deg * PI / 180;
-    float sin = 0;
-
-    int i;
-    for (i = 0; i < 4; i++)
-    {
-        sin += power(-1, i) * power(rad, 2 * i + 1) / fact(2 * i + 1);
-    }
-    return sin;
-}
-
-float OLED_Grafix::cos(int deg)
-{
-    deg %= 360;
-    float rad = deg * PI / 180;
-    float cos = 0;
-
-    int i;
-    for (i = 0; i < 4; i++)
-    {
-        cos += power(-1, i) * power(rad, 2 * i) / fact(2 * i);
-    }
-    return cos;
-}
-
-float OLED_Grafix::power(float base, int exp)
-{
-    if (exp < 0)
-    {
-        if (base == 0)
-            return -0; // Error!!
-        return 1 / (base * power(base, (-exp) - 1));
-    }
-    if (exp == 0)
-        return 1;
-    if (exp == 1)
-        return base;
-    return base * power(base, exp - 1);
-}
-
-int OLED_Grafix::fact(int n)
-{
-    return n <= 0 ? 1 : n * fact(n - 1);
-}

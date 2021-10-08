@@ -16,7 +16,7 @@ void setup()  {
   pinMode(oled_dc, OUTPUT);
 
   //Init UART
-  Serial.begin(115200);
+  Serial.begin(9600);
 
 #if INTERFACE_4WIRE_SPI
   //Init SPI
@@ -51,13 +51,13 @@ void loop() {
   grafix.setBarColor(GREEN);
   grafix.setGraphColor(WHITE);
   grafix.setTextColor(BLUE);
-  grafix.HBarGraph(50, 19, 60, 10, count, 60);
-  grafix.VBarGraph(2, 60, 10, 60, count, 60);
-  grafix.drawGauge(60,70,count,60,30);
-  // grafix.drawGauge(60, 120, count, 60, 20);
-  grafix.drawFrame(60, 75);
+  grafix.HBarGraph(50, 19, 60, 10, count, 100);
+  grafix.VBarGraph(2, 60, 10, 60, count, 100);
+  grafix.drawGauge(60, 70, count, 100, 30);
+  grafix.drawGauge(40, 120, count, 100, 20);
+  grafix.drawGauge(85, 120, count, 100, 20);
 
-  if (count == 60) {
+  if (count == 100) {
     switcher = true;
   }
   if (count == 0) {
@@ -72,5 +72,5 @@ void loop() {
 
   grafix.printNum(30, 20, count);
   
-  delay(50);
+  
 }
