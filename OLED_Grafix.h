@@ -17,6 +17,7 @@ class OLED_Grafix : public virtual OLED_Driver{
         void setBarColor(uint16_t color);
         void setGraphColor(uint16_t color);
         void setTextColor(uint16_t color);
+        void setGaugeText(bool text);
         void initScreen(void);
         void HBarGraph(int x, int y, float w, int h, float value, float maxi);
         void VBarGraph(int x, int y, int w, float h, float value, float maxi);
@@ -30,13 +31,14 @@ class OLED_Grafix : public virtual OLED_Driver{
         void drawGauge(uint16_t x, uint16_t y, uint16_t value, uint16_t max, uint16_t radius);
         void setColor(const uint8_t *text);
         void setFillColor(const uint8_t *text);
-        void printNum(uint8_t x, uint8_t y, uint8_t num);
+        void writeNumber(uint8_t x, uint8_t y, uint8_t num);
         void writeText(uint8_t x, uint8_t y, const uint8_t *text);
 
     private :
         uint16_t bar_color;
         uint16_t graph_color;
         uint16_t text_color;
+        bool text_status;
         
         void writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
         void circleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corner);

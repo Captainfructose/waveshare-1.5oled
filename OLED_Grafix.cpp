@@ -11,6 +11,10 @@ OLED_Driver oled_d = OLED_Driver();
 
 OLED_Grafix::OLED_Grafix(void){}
 
+void OLED_Grafix::setGaugeText(bool text) {
+    text_status = text;
+}
+
 void OLED_Grafix::setBarColor(uint16_t color = WHITE) {
     bar_color = color;
 }
@@ -219,6 +223,11 @@ void OLED_Grafix::drawGauge(uint16_t x0, uint16_t y0, uint16_t value, uint16_t m
         setColor(graph_color);
     }
 
+    if(text_status) 
+    {
+        writeNumber(x0 - 5, y0 - 8, value);
+    }
+
     while (x < y)
     {
         if (f >= 0)
@@ -249,7 +258,7 @@ void OLED_Grafix::setFillColor(const uint8_t *text)
     Set_FillColor(text);
 }
 
-void OLED_Grafix::printNum(uint8_t x, uint8_t y, uint8_t num)
+void OLED_Grafix::writeNumber(uint8_t x, uint8_t y, uint8_t num)
 {
     oled_d.Set_Color(text_color);
     const char *nums[11] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};

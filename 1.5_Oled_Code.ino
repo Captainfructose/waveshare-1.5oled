@@ -33,29 +33,35 @@ void setup()  {
 #endif
   grafix.initScreen();
   grafix.setTextColor(GREEN);
-  grafix.writeText(1,1,"1.5 inch display test");
-  grafix.setColor(YELLOW);
+  grafix.writeText(1,1,"Brandon's K40");
+  grafix.setColor(WHITE);
   grafix.drawLine(0,10,128,10);
-  grafix.setTextColor(CYAN);
-  grafix.writeText(1,20,"Ammo:");
-  grafix.setColor(YELLOW);
-  grafix.drawLine(0,30,128,30);
-  grafix.setColor(CYAN);
+  grafix.drawCircle(85, 60, 20);
 
   Serial.begin(9600);
 }
 
 int count;
+int count2;
 boolean switcher = false;
 void loop() {
-  grafix.setBarColor(GREEN);
+  grafix.setBarColor(BLUE);
   grafix.setGraphColor(WHITE);
-  grafix.setTextColor(BLUE);
-  grafix.HBarGraph(50, 19, 60, 10, count, 100);
-  grafix.VBarGraph(2, 60, 10, 60, count, 100);
-  grafix.drawGauge(60, 70, count, 100, 30);
-  grafix.drawGauge(40, 120, count, 100, 20);
-  grafix.drawGauge(85, 120, count, 100, 20);
+  grafix.setTextColor(WHITE);
+  grafix.setGaugeText(true);
+  grafix.drawGauge(20, 60, count, 100, 20);
+  grafix.writeText(9, 25, "Temp");
+  // grafix.writeNumber(15, 52, count);
+  grafix.setColor(WHITE);
+  grafix.drawLine(85, 60, 85 - (20 - 2) * cos(count2 * (PI / 180)), 60 - (20 - 2) * sin(count2 * (PI / 180)));
+  grafix.drawLine(85, 60, 85 - (20 - 2) * cos((count2 - 90) * (PI / 180)), 60 - (20 - 2) * sin((count2 - 90) * (PI / 180)));
+  grafix.drawLine(85, 60, 85 - (20 - 2) * cos((count2 - 180) * (PI / 180)), 60 - (20 - 2) * sin((count2 - 180) * (PI / 180)));
+  grafix.drawLine(85, 60, 85 - (20 - 2) * cos((count2 - 270) * (PI / 180)), 60 - (20 - 2) * sin((count2 - 270) * (PI / 180)));
+  grafix.setColor(BLACK);
+  grafix.drawLine(85, 60, 85 - (20 - 2) * cos((count2 - 14) * (PI / 180)), 60 - (20 - 2) * sin((count2 - 14) * (PI / 180)));
+  grafix.drawLine(85, 60, 85 - (20 - 2) * cos((count2 - 104) * (PI / 180)), 60 - (20 - 2) * sin((count2 - 104) * (PI / 180)));
+  grafix.drawLine(85, 60, 85 - (20 - 2) * cos((count2 - 194) * (PI / 180)), 60 - (20 - 2) * sin((count2 - 194) * (PI / 180)));
+  grafix.drawLine(85, 60, 85 - (20 - 2) * cos((count2 - 284) * (PI / 180)), 60 - (20 - 2) * sin((count2 - 284) * (PI / 180)));
 
   if (count == 100) {
     switcher = true;
@@ -69,8 +75,10 @@ void loop() {
   if (switcher == false) {
     count++;
   }
-
-  grafix.printNum(30, 20, count);
-  
+  if (count2 > 360)
+  {
+    count2 = 0;
+  }
+  count2 += 2;
   
 }
